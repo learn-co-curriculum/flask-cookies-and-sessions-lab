@@ -30,18 +30,14 @@ def index_articles():
 
 @app.route("/articles/<int:id>")
 def show_article(id):
-    # Step 1: initialize page_views if this is the user's first article request
     if "page_views" not in session:
         session["page_views"] = 0
 
-    # Step 2: increment page_views every time an article is requested
     session["page_views"] += 1
 
-    # Step 3: if user has viewed more than 3 articles, block access
     if session["page_views"] > 3:
         return jsonify({"message": "Maximum pageview limit reached"}), 401
 
-    # Step 4: otherwise, return the article data
     article = Article.query.filter(Article.id == id).first()
 
     if not article:
