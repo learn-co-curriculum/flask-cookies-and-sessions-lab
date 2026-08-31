@@ -27,7 +27,6 @@ def index_articles():
     articles = [ArticleSchema().dump(a) for a in Article.query.all()]
     return make_response(articles)
 
-
 @app.route('/articles/<int:id>')
 def show_article(id):
     article = Article.query.filter_by(id=id).first()
@@ -35,17 +34,17 @@ def show_article(id):
     if article is None:
         return {'error': 'Article not found'}, 404
 
+    # Get the current page views and increment
     page_views = session.get('page_views', 0)
+    page_views += 1
+    session['page_views'] = page_views
 
-    if page_views >= 3:
-        return {
-            'error': 'Maximum pageview limit reached'
-        }, 401
-
-    session['page_views'] = page_views + 1
+    # Paywall after 3 free views
+    if page_views > 3:
+        return {'error': 'Maximum pageview limit reached'}, 401
 
     return ArticleSchema().dump(article), 200
 
-
+    
 if __name__ == '__main__':
     app.run(port=5555)
