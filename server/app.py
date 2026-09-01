@@ -41,7 +41,7 @@ def show_article(id):
 
     # Paywall after 3 free views
     if page_views > 3:
-        return {'error': 'Maximum pageview limit reached'}, 401
+        return {'message': 'Maximum pageview limit reached'}, 401
 
     return ArticleSchema().dump(article), 200
 
